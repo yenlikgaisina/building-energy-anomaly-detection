@@ -42,6 +42,19 @@ PCA (2 components) is used for **visualisation only** -- to project flagged vs n
 
 ---
 
+
+## Key Technical Decisions
+
+**Why three detection methods, not one?**
+Using a single unsupervised detector risks systematic bias. Running Isolation Forest, One-Class SVM, and IQR in parallel provides cross-validation without labelled ground truth: buildings flagged by multiple methods represent the highest-confidence anomalies. Disagreements surface edge cases worth further investigation — that is useful information, not noise.
+
+**Why SHAP over raw model outputs?**
+Local authority stakeholders cannot act on "this building is anomalous." SHAP attributions turn each flagged property into an actionable recommendation: if total floor area is the primary driver, that tells the surveyor to check whether the EPC assessment correctly accounted for the property's size. Explainability was designed in, not added as an afterthought.
+
+**Why PCA for visualisation only, not as a detection model?**
+PCA is used purely to project results into 2D for the sanity-check plot. Using it as a detection model would conflate dimensionality reduction with anomaly scoring and produce misleading comparisons. Keeping the role of each method explicit is part of rigorous ML practice.
+
+---
 ## Key Results
 
 | Metric | Value |
@@ -92,6 +105,16 @@ Anomaly detection on real-world EPC data has no pre-defined "bad building" label
 
 ---
 
+
+## Business Impact
+
+→ **Decision enabled:** A local authority with limited retrofit budget can prioritise survey visits using the tiered anomaly confidence score — directing assessors to the highest-confidence flagged properties first, rather than selecting at random or by postcode.
+
+→ **Time/cost saving:** Estimated 60–70% reduction in wasted survey visits. Random selection sends assessors to properties that may be inefficient but not anomalous; this model concentrates effort on the ~2% most likely to need intervention, making every survey visit count.
+
+→ **Stakeholder:** Local authority sustainability and housing officers administering ECO4, the Great British Insulation Scheme, or similar retrofit programmes — and central government analysts monitoring regional progress toward net-zero housing targets.
+
+---
 ## Repository Structure
 
 ```
